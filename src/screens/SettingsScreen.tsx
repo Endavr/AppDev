@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useStore } from '../store/useStore';
+import { useNavigation } from '@react-navigation/native';
 
 const SettingsScreen = () => {
   const { settings, updateSettings } = useStore();
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-
-  const toggleTheme = () => {
-    updateSettings({ theme: settings.theme === 'light' ? 'dark' : 'light' });
-  };
+  const navigation = useNavigation();
 
   const handleStartDateChange = (event: any, date: Date | undefined) => {
     setShowStartDatePicker(false); // Close the start date picker
@@ -34,6 +32,10 @@ const SettingsScreen = () => {
         },
       });
     }
+  };
+
+  const handleLogout = () => {
+    navigation.navigate('Signup');
   };
 
   return (
@@ -74,18 +76,7 @@ const SettingsScreen = () => {
         )}
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Appearance</Text>
-        <View style={styles.settingRow}>
-          <Text>Dark Theme</Text>
-          <Switch
-            value={settings.theme === 'dark'}
-            onValueChange={toggleTheme}
-          />
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
     </View>
@@ -115,12 +106,6 @@ const styles = StyleSheet.create({
   dateText: {
     color: '#007AFF',
     textDecorationLine: 'underline',
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
   },
   logoutButton: {
     backgroundColor: '#ff3b30',
