@@ -9,9 +9,16 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useStore } from '../store/useStore';
-import { Task } from '../types';
+import { Task } from '../types/index';
 
-const EditTaskScreen = ({ navigation, route }) => {
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../navigation/types';
+
+type EditTaskScreenNavigationProp = StackNavigationProp<RootStackParamList, 'EditTask'>;
+type EditTaskScreenRouteProp = RouteProp<RootStackParamList, 'EditTask'>;
+
+const EditTaskScreen = ({ navigation, route }: { navigation: EditTaskScreenNavigationProp; route: EditTaskScreenRouteProp }) => {
   const { updateTask } = useStore();
   const task: Task = route.params.task;
 
