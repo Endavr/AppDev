@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore';
 import { differenceInDays } from 'date-fns';
 import { NavigationProp } from '@react-navigation/native';
 
- const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
+const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const { tasks, settings } = useStore();
   
   const calculateSemesterProgress = () => {
@@ -22,6 +22,7 @@ import { NavigationProp } from '@react-navigation/native';
 
   return (
     <View style={styles.container}>
+      <Text style={styles.progressLabel}>Semester Progress</Text>
       <CircularProgress progress={calculateSemesterProgress()} />
       
       <View style={styles.statsContainer}>
@@ -58,6 +59,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: 'white',
+  },
+  progressLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
   },
   statsContainer: {
     flexDirection: 'row',
