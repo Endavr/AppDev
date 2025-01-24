@@ -7,7 +7,7 @@ import { useStore } from '../store/useStore';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 
 const TasksScreen = ({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any> }) => {
-  const { tasks = [], completeTask, deleteTask } = useStore(); // Ensure the name matches
+  const { tasks = [], completeTask, deleteTask } = useStore();
   const filter = route.params?.filter || 'all';
 
   const filteredTasks = tasks.filter(task => {
@@ -39,7 +39,7 @@ const TasksScreen = ({ navigation, route }: { navigation: NavigationProp<any>, r
       />
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('AddTask')} // Ensure the name matches
+        onPress={() => navigation.navigate('AddTask')}
       >
         <Icon name="add" size={30} color="white" />
       </TouchableOpacity>

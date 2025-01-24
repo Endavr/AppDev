@@ -52,7 +52,9 @@ export const useStore = create<AppState>()(
       completeTask: (id) =>
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, completed: true } : task
+            task.id === id
+              ? { ...task, completed: !task.completed } // Toggle the completed status
+              : task
           ),
         })),
       updateSettings: (newSettings) =>

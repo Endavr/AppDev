@@ -23,14 +23,29 @@ type AddTaskScreenNavigationProp = StackNavigationProp<
 const AddTaskScreen = ({ navigation }: { navigation: AddTaskScreenNavigationProp }) => {
   const { addTask } = useStore();
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState('');
   const [deadline, setDeadline] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const handleAddTask = () => {
-    addTask({ title, description, deadline, tags: [] });
+    addTask({
+      title, tags, deadline,
+      description: ''
+    });
     navigation.goBack();
+  };
+
+  const handleAddTag = () => {
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput('');
+    }
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    setTags(tags.filter(t => t !== tag));
   };
 
   interface DateChangeEvent {
@@ -73,13 +88,26 @@ const AddTaskScreen = ({ navigation }: { navigation: AddTaskScreenNavigationProp
         placeholder="Enter task title"
       />
 
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={styles.input}
-        value={description}
-        onChangeText={setDescription}
-        placeholder="Enter task description"
-      />
+      <Text style={styles.label}>Tags</Text>
+      <View style={styles.tagInputContainer}>
+        <TextInput
+          style={styles.tagInput}
+          value={tagInput}
+          onChangeText={setTagInput}
+          placeholder="Enter a tag"
+        />
+        <Button title="Add Tag" onPress={handleAddTag} />
+      </View>
+      <View style={styles.tagList}>
+        {tags.map(tag => (
+          <View key={tag} style={styles.tag}>
+            <Text style={styles.tagText}>{tag}</Text>
+            <TouchableOpacity onPress={() => handleRemoveTag(tag)}>
+              <Text style={styles.removeTag}>✕</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
 
       <Text style={styles.label}>Deadline</Text>
       <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
@@ -132,6 +160,42 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     marginBottom: 16,
+  },
+  tagInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  tagInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 8,
+    marginRight: 8,
+  },
+  tagList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 16,
+  },
+  tag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#007bff',
+    borderRadius: 16,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  tagText: {
+    color: 'white',
+    marginRight: 4,
+  },
+  removeTag: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   deadlineText: {
     marginTop: 8,
