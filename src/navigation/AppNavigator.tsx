@@ -14,9 +14,9 @@ const Tab = createBottomTabNavigator();
 // In AppNavigator.tsx
 const TasksStack = () => (
   <Stack.Navigator>
-    {/* <Stack.Screen name="TasksList" component={TasksScreen} options={{ title: 'Tasks' }} />*/}
+    {/* <Stack.Screen name="TasksList" component={TasksScreen} options={{headerShown: false }} /> */}
     <Stack.Screen name="AddTaskScreen" component={AddTaskScreen} options={{ title: 'Add Task' }} />
-    {/* <Stack.Screen name="EditTaskScreen" component={EditTaskScreen} options={{ title: 'Edit Task' }} />*/}
+    {/* <Stack.Screen name="EditTaskScreen" component={EditTaskScreen} options={{ title: 'Edit Task' }} /> */}
   </Stack.Navigator>
 );
 

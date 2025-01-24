@@ -13,13 +13,13 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({ progress }) 
         size={200}
         width={15}
         fill={progress}
-        tintColor="#ffffff"
-        backgroundColor="#00e0ff"
+        tintColor="00e0ff"
+        backgroundColor="#ffffff"
         rotation={0}
       >
         {(fill) => (
           <Text style={styles.progressText}>
-            {Math.round(fill)}% Complete
+            {Number.isFinite(fill) ? `${Math.round(fill)}% Complete` : '0% Complete'}
           </Text>
         )}
       </AnimatedCircularProgress>

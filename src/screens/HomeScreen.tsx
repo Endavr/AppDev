@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   gradientCard: {
-    backgroundColor: 'transparent', // To let the gradient background show
+    backgroundColor: '#6A5ACD', // To let the gradient background show
   },
   statNumber: {
     fontSize: 24,
