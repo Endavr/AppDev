@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CircularProgress } from '../components/CircularProgress';
 import { useStore } from '../store/useStore';
 import { differenceInDays } from 'date-fns';
-
 import { NavigationProp } from '@react-navigation/native';
 
  const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
