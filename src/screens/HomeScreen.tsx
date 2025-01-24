@@ -80,7 +80,7 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
     </View>
 
     {/* Task List */}
-    <FlatList
+    {/* <FlatList
       data={tasks}
       keyExtractor={item => item.id}
       renderItem={({ item }) => (
@@ -92,7 +92,7 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
         </View>
       )}
       contentContainerStyle={styles.taskList}
-    />
+    /> */}
   </LinearGradient>
 );
 };
@@ -102,6 +102,7 @@ container: {
   flex: 1,
 },
 progressContainer: {
+  flex: 1,
   alignItems: 'center',
   marginTop: 32,
 },
@@ -109,6 +110,8 @@ progressLabel: {
   fontSize: 18,
   fontWeight: 'bold',
   color: 'white',
+  alignContent: 'center',
+  textAlign: 'center',
 },
 progressText: {
   marginTop: 16,
@@ -152,6 +155,7 @@ taskList: {
   paddingBottom: 16,
 },
 taskItem: {
+  flexDirection: 'column',
   backgroundColor: 'rgba(88, 208, 255, 0.67)',
   marginHorizontal: 16,
   padding: 12,

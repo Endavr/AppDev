@@ -13,7 +13,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({ progress }) 
         size={200}
         width={15}
         fill={progress}
-        tintColor="00e0ff"
+        tintColor="#00e0ff"
         backgroundColor="#ffffff"
         rotation={0}
       >
@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   progressText: {
+    color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
   },

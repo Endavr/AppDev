@@ -15,9 +15,9 @@ const Tab = createBottomTabNavigator();
 
 const TasksStack = () => (
   <Stack.Navigator>
-    {/* <Stack.Screen name="TasksList" component={TasksScreen} options={{ headerShown: false }} /> */}
+    <Stack.Screen name="TasksList" component={TasksScreen} options={{ headerShown: false }} />
     <Stack.Screen name="AddTask" component={AddTaskScreen} options={{ title: 'Add Task' }} />
-    {/* <Stack.Screen name="EditTask" component={EditTaskScreen} options={{ title: 'Edit Task' }} /> */}
+    <Stack.Screen name="EditTask" component={EditTaskScreen} options={{ title: 'Edit Task' }} />
   </Stack.Navigator>
 );
 
