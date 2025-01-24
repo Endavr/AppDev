@@ -6,7 +6,7 @@ import { differenceInDays } from 'date-fns';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProp } from '@react-navigation/native';
 
- const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
+const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const { tasks, settings } = useStore();
   
   const calculateSemesterProgress = () => {
@@ -28,6 +28,8 @@ import { NavigationProp } from '@react-navigation/native';
   >
     {/* Semester Progress */}
     <View style={styles.progressContainer}>
+    <View style={styles.container}>
+      <Text style={styles.progressLabel}>Semester Progress</Text>
       <CircularProgress progress={calculateSemesterProgress()} />
       <Text style={styles.progressText}>
         {Math.round(calculateSemesterProgress())}% of the semester completed
@@ -75,6 +77,7 @@ import { NavigationProp } from '@react-navigation/native';
         </LinearGradient>
       </TouchableOpacity>
     </View>
+    </View>
 
     {/* Task List */}
     <FlatList
@@ -101,6 +104,11 @@ container: {
 progressContainer: {
   alignItems: 'center',
   marginTop: 32,
+},
+progressLabel: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  color: 'white',
 },
 progressText: {
   marginTop: 16,

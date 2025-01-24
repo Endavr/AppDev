@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useStore } from '../store/useStore';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+
 const SettingsScreen = () => {
   const { settings, updateSettings } = useStore();
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-
-  const toggleTheme = () => {
-    updateSettings({ theme: settings.theme === 'light' ? 'dark' : 'light' });
-  };
+  const navigation = useNavigation();
 
   const handleStartDateChange = (event: any, date: Date | undefined) => {
     setShowStartDatePicker(false); // Close the start date picker
@@ -34,6 +33,10 @@ const SettingsScreen = () => {
         },
       });
     }
+  };
+
+  const handleLogout = () => {
+    navigation.navigate('Signup');
   };
 
   return (
@@ -79,20 +82,7 @@ const SettingsScreen = () => {
         )}
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Appearance</Text>
-        <View style={styles.settingRow}>
-          <Text style={styles.settingLabel}>Dark Theme</Text>
-          <Switch
-            value={settings.theme === 'dark'}
-            onValueChange={toggleTheme}
-            thumbColor="#fff"
-            trackColor={{ false: '#767577', true: '#4caf50' }} // Toggle switch colors
-          />
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
     </LinearGradient>
@@ -135,16 +125,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#007AFF', // Blue color for clickable dates
     textDecorationLine: 'underline',
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-  },
-  settingLabel: {
-    fontSize: 16,
-    color: '#333',
   },
   logoutButton: {
     backgroundColor: '#ff3b30', // Red color for logout button
