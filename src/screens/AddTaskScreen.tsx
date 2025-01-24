@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useStore } from '../store/useStore';
-
+import { LinearGradient } from 'expo-linear-gradient';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/types';
 
@@ -24,6 +24,7 @@ const AddTaskScreen = ({ navigation }: { navigation: AddTaskScreenNavigationProp
   const { addTask } = useStore();
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+  const [description, setDescription] = useState('');
   const [tagInput, setTagInput] = useState('');
   const [deadline, setDeadline] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -79,140 +80,147 @@ const AddTaskScreen = ({ navigation }: { navigation: AddTaskScreenNavigationProp
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Title</Text>
-      <TextInput
-        style={styles.input}
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Enter task title"
-      />
-
-      <Text style={styles.label}>Tags</Text>
-      <View style={styles.tagInputContainer}>
+    <LinearGradient
+      colors={['#1E90FF', '#6A5ACD', '#00CED1']}
+      style={styles.gradientContainer}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.label}>Title</Text>
         <TextInput
-          style={styles.tagInput}
-          value={tagInput}
-          onChangeText={setTagInput}
-          placeholder="Enter a tag"
+          style={styles.input}
+          value={title}
+          onChangeText={setTitle}
+          placeholder="Enter task title"
+          placeholderTextColor="#aaa"
         />
-        <Button title="Add Tag" onPress={handleAddTag} />
-      </View>
-      <View style={styles.tagList}>
-        {tags.map(tag => (
-          <View key={tag} style={styles.tag}>
-            <Text style={styles.tagText}>{tag}</Text>
-            <TouchableOpacity onPress={() => handleRemoveTag(tag)}>
-              <Text style={styles.removeTag}>✕</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
 
-      <Text style={styles.label}>Deadline</Text>
-      <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
-      {showDatePicker && (
-        <DateTimePicker
-          value={deadline}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
+        <Text style={styles.label}>Description</Text>
+        <TextInput
+          style={styles.input}
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Enter task description"
+          placeholderTextColor="#aaa"
         />
-      )}
-      <Button title="Select Time" onPress={() => setShowTimePicker(true)} />
-      {showTimePicker && (
-        <DateTimePicker
-          value={deadline}
-          mode="time"
-          display="default"
-          onChange={handleTimeChange}
-        />
-      )}
-      <Text style={styles.deadlineText}>
-        {deadline ? deadline.toLocaleString() : 'No deadline selected'}
-      </Text>
 
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={handleAddTask}
-        disabled={!title.trim()}
-      >
-        <Text style={styles.addButtonText}>Add Task</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <Text style={styles.label}>Deadline</Text>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.dateButton}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Text style={styles.buttonText}>Select Date</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.timeButton}
+            onPress={() => setShowTimePicker(true)}
+          >
+            <Text style={styles.buttonText}>Select Time</Text>
+          </TouchableOpacity>
+        </View>
+        {showDatePicker && (
+          <DateTimePicker
+            value={deadline}
+            mode="date"
+            display="spinner"
+            onChange={handleDateChange}
+          />
+        )}
+        {showTimePicker && (
+          <DateTimePicker
+            value={deadline}
+            mode="time"
+            display="spinner"
+            onChange={handleTimeChange}
+          />
+        )}
+        <Text style={styles.deadlineText}>
+          Deadline: {deadline ? deadline.toLocaleString() : 'Not set'}
+        </Text>
+
+        <TouchableOpacity
+          style={[styles.addButton, !title.trim() && styles.disabledButton]}
+          onPress={handleAddTask}
+          disabled={!title.trim()}
+        >
+          <Text style={styles.addButtonText}>Add Task</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  gradientContainer: {
+    flex: 1,
+  },
   container: {
     flexGrow: 1,
     padding: 16,
-    backgroundColor: 'white',
+    paddingBottom: 32,
   },
   label: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    color: 'white',
     marginBottom: 8,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 8,
-    padding: 8,
+    padding: 12,
     marginBottom: 16,
+    color: '#333',
+    fontSize: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  tagInputContainer: {
+  buttonRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 16,
   },
-  tagInput: {
+  dateButton: {
+    backgroundColor: '#1fa2ff',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    marginRight: 8,
+  },
+  timeButton: {
+    backgroundColor: '#c471ed',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 8,
-    padding: 8,
-    marginRight: 8,
+    flex: 1,
+    marginLeft: 8,
   },
-  tagList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 16,
-  },
-  tag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#007bff',
-    borderRadius: 16,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  tagText: {
+  buttonText: {
     color: 'white',
-    marginRight: 4,
-  },
-  removeTag: {
-    color: 'white',
+    fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   deadlineText: {
-    marginTop: 8,
-    marginBottom: 16,
+    color: 'white',
     fontSize: 16,
-    color: '#666',
+    marginBottom: 16,
   },
   addButton: {
-    backgroundColor: '#007bff',
-    padding: 16,
+    backgroundColor: '#5f2eea',
+    paddingVertical: 16,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20,
+  },
+  disabledButton: {
+    backgroundColor: '#aaa',
   },
   addButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });

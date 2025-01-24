@@ -13,8 +13,8 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({ progress }) 
         size={200}
         width={15}
         fill={progress}
-        tintColor="#00e0ff"
-        backgroundColor="#3d5875"
+        tintColor="#ffffff"
+        backgroundColor="#00e0ff"
         rotation={0}
       >
         {(fill) => (
