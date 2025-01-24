@@ -5,8 +5,14 @@ import TaskCard from '../components/TaskCard';
 import { useStore } from '../store/useStore';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../navigation/types';
 
-const TasksScreen = ({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any> }) => {
+type TasksScreenProps = {
+  navigation: NavigationProp<RootStackParamList, 'TasksList'>;
+  route: RouteProp<RootStackParamList, 'TasksList'>;
+};
+
+const TasksScreen: React.FC<TasksScreenProps> = ({ navigation, route }) => {
   const { tasks = [], completeTask, deleteTask } = useStore();
   const filter = route.params?.filter || 'all';
 
@@ -14,13 +20,18 @@ const TasksScreen = ({ navigation, route }: { navigation: NavigationProp<any>, r
     switch (filter) {
       case 'completed':
         return task.completed;
-      case 'incomplete':
+      case 'pending':
         return !task.completed && !task.missed;
       case 'missed':
         return task.missed;
       default:
         return true;
     }
+  });
+
+  // Sort tasks by deadline (ascending order: closest first)
+  const sortedTasks = filteredTasks.sort((a, b) => {
+    return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
   });
 
   return (
@@ -44,7 +55,7 @@ const TasksScreen = ({ navigation, route }: { navigation: NavigationProp<any>, r
 
         <TouchableOpacity  
           style={styles.addButton}  
-          onPress={() => navigation.navigate('AddTask')}  
+          onPress={() => navigation.navigate('AddTaskScreen')}  
         >  
           <LinearGradient  
             colors={['#00CED1', '#1E90FF']}  

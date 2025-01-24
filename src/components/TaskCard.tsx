@@ -3,6 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Task } from '../types';
 import { format } from 'date-fns';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigation/types';
 
 interface TaskCardProps {
   task: Task;
@@ -11,12 +14,9 @@ interface TaskCardProps {
   onDelete: () => void;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({
-  task,
-  onComplete,
-  onEdit,
-  onDelete,
-}) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, onComplete, onDelete }) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'EditTask'>>();
+
   if (!task) {
     return null; // Ensure task is not undefined
   }
@@ -27,9 +27,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         <Text style={styles.title}>{task.title}</Text>
         <View style={styles.actions}>
           <TouchableOpacity onPress={onComplete}>
-            <Icon name={task.completed ? "check-circle" : "radio-button-unchecked"} size={24} />
+            <Icon name={task.completed ? 'check-circle' : 'radio-button-unchecked'} size={24} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onEdit}>
+          <TouchableOpacity onPress={() => navigation.navigate('EditTask', { task })}>
             <Icon name="edit" size={24} />
           </TouchableOpacity>
           <TouchableOpacity onPress={onDelete}>
@@ -38,11 +38,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         </View>
       </View>
       <View style={styles.tags}>
-        {task.tags && task.tags.map((tag, index) => (
-          <View key={index} style={styles.tag}>
-            <Text style={styles.tagText}>{tag}</Text>
-          </View>
-        ))}
+        {task.tags &&
+          task.tags.map((tag, index) => (
+            <View key={index} style={styles.tag}>
+              <Text style={styles.tagText}>{tag}</Text>
+            </View>
+          ))}
       </View>
       <Text style={styles.deadline}>
         Due: {task.deadline ? format(new Date(task.deadline), 'PPp') : 'No deadline'}

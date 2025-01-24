@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,35 +6,51 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Button,
+  Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useStore } from '../store/useStore';
-import { Task } from '../types/index';
-
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/types';
+import { useStore } from '../store/useStore';
 
-type EditTaskScreenNavigationProp = StackNavigationProp<RootStackParamList, 'EditTask'>;
-type EditTaskScreenRouteProp = RouteProp<RootStackParamList, 'EditTask'>;
+type EditTaskScreenProps = StackScreenProps<RootStackParamList, 'EditTask'>;
 
-const EditTaskScreen = ({ navigation, route }: { navigation: EditTaskScreenNavigationProp; route: EditTaskScreenRouteProp }) => {
+const EditTaskScreen: React.FC<EditTaskScreenProps> = ({ navigation, route }) => {
   const { updateTask } = useStore();
-  const task: Task = route.params.task;
+  const task = route.params.task;
 
   const [title, setTitle] = useState(task.title);
   const [tags, setTags] = useState(task.tags.join(', '));
   const [deadline, setDeadline] = useState(new Date(task.deadline));
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
   const handleSubmit = () => {
-    const tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+    const tagArray = tags.split(',').map((tag) => tag.trim()).filter(Boolean);
     updateTask({
       ...task,
       title,
       tags: tagArray,
-      deadline,
+      deadline: deadline,
     });
     navigation.goBack();
+  };
+
+  const showDatePicker = () => setIsDatePickerVisible(true);
+  const hideDatePicker = () => setIsDatePickerVisible(false);
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      if (event.type === 'dismissed') {
+        hideDatePicker();
+        return;
+      }
+      hideDatePicker();
+    }
+
+    if (selectedDate) {
+      setDeadline(selectedDate);
+    }
   };
 
   return (
@@ -62,15 +78,17 @@ const EditTaskScreen = ({ navigation, route }: { navigation: EditTaskScreenNavig
 
         <View style={styles.field}>
           <Text style={styles.label}>Deadline</Text>
-          <DateTimePicker
-            value={deadline}
-            mode="datetime"
-            onChange={(event, selectedDate) => {
-              if (selectedDate) {
-                setDeadline(selectedDate);
-              }
-            }}
-          />
+          <TouchableOpacity onPress={showDatePicker} style={styles.datePickerButton}>
+            <Text style={styles.datePickerText}>{deadline.toLocaleString()}</Text>
+          </TouchableOpacity>
+          {isDatePickerVisible && (
+            <DateTimePicker
+              value={deadline}
+              mode="datetime"
+              display={Platform.OS === 'ios' ? 'inline' : 'default'}
+              onChange={handleDateChange}
+            />
+          )}
         </View>
 
         <TouchableOpacity
@@ -108,6 +126,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+  },
+  datePickerButton: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+  },
+  datePickerText: {
+    fontSize: 16,
+    color: '#333',
   },
   submitButton: {
     backgroundColor: '#007AFF',
