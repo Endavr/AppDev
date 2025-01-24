@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { CircularProgress } from '../components/CircularProgress';
 import { useStore } from '../store/useStore';
 import { differenceInDays } from 'date-fns';
@@ -23,74 +23,148 @@ import { NavigationProp } from '@react-navigation/native';
 
   return (
     <LinearGradient
-      colors={['#1E90FF', '#6A5ACD', '#00CED1']} // Turquoise, blue, and purple
-      style={styles.container}
-    >
+    colors={['#1E90FF', '#6A5ACD', '#00CED1']} // Turquoise, blue, and purple
+    style={styles.container}
+  >
+    {/* Semester Progress */}
+    <View style={styles.progressContainer}>
       <CircularProgress progress={calculateSemesterProgress()} />
+      <Text style={styles.progressText}>
+        {Math.round(calculateSemesterProgress())}% of the semester completed
+      </Text>
+    </View>
 
-      <View style={styles.statsContainer}>
-        <TouchableOpacity
-          style={[styles.statCard, styles.gradientCard]}
-          onPress={() => navigation.navigate('Tasks', { filter: 'completed' })}
+    {/* Task Statistics */}
+    <View style={styles.statsContainer}>
+      <TouchableOpacity
+        style={styles.statCard}
+        onPress={() => navigation.navigate('Tasks', { filter: 'completed' })}
+      >
+        <LinearGradient
+          colors={['#6A5ACD', '#1E90FF']}
+          style={styles.gradientCard}
         >
           <Text style={styles.statNumber}>{completedTasks}</Text>
           <Text style={styles.statLabel}>Completed</Text>
-        </TouchableOpacity>
+        </LinearGradient>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.statCard, styles.gradientCard]}
-          onPress={() => navigation.navigate('Tasks', { filter: 'pending' })}
+      <TouchableOpacity
+        style={styles.statCard}
+        onPress={() => navigation.navigate('Tasks', { filter: 'pending' })}
+      >
+        <LinearGradient
+          colors={['#00CED1', '#1E90FF']}
+          style={styles.gradientCard}
         >
           <Text style={styles.statNumber}>{pendingTasks}</Text>
           <Text style={styles.statLabel}>Pending</Text>
-        </TouchableOpacity>
+        </LinearGradient>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.statCard, styles.gradientCard]}
-          onPress={() => navigation.navigate('Tasks', { filter: 'missed' })}
+      <TouchableOpacity
+        style={styles.statCard}
+        onPress={() => navigation.navigate('Tasks', { filter: 'missed' })}
+      >
+        <LinearGradient
+          colors={['#FF6347', '#FF4500']}
+          style={styles.gradientCard}
         >
           <Text style={styles.statNumber}>{missedTasks}</Text>
-          <Text style={styles.statLabel}>Missing</Text>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
-  );
+          <Text style={styles.statLabel}>Missed</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+    </View>
+
+    {/* Task List */}
+    <FlatList
+      data={tasks}
+      keyExtractor={item => item.id}
+      renderItem={({ item }) => (
+        <View style={styles.taskItem}>
+          <Text style={styles.taskTitle}>{item.title}</Text>
+          <Text style={styles.taskDeadline}>
+            Due: {new Date(item.deadline).toLocaleDateString()}
+          </Text>
+        </View>
+      )}
+      contentContainerStyle={styles.taskList}
+    />
+  </LinearGradient>
+);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 32,
-  },
-  statCard: {
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    minWidth: 100,
-    elevation: 5, // For shadow on Android
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  gradientCard: {
-    backgroundColor: '#6A5ACD', // To let the gradient background show
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  statLabel: {
-    fontSize: 16,
-    color: '#E0E0E0',
-    marginTop: 4,
-  },
+container: {
+  flex: 1,
+},
+progressContainer: {
+  alignItems: 'center',
+  marginTop: 32,
+},
+progressText: {
+  marginTop: 16,
+  fontSize: 16,
+  fontWeight: '500',
+  color: 'white',
+},
+statsContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginVertical: 32,
+  marginHorizontal: 16,
+},
+statCard: {
+  flex: 1,
+  marginHorizontal: 8,
+  borderRadius: 12,
+  overflow: 'hidden',
+  elevation: 5,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.2,
+  shadowRadius: 4,
+},
+gradientCard: {
+  paddingVertical: 24,
+  paddingHorizontal: 16,
+  alignItems: 'center',
+},
+statNumber: {
+  fontSize: 28,
+  fontWeight: 'bold',
+  color: 'white',
+},
+statLabel: {
+  fontSize: 16,
+  color: '#E0E0E0',
+  marginTop: 8,
+},
+taskList: {
+  paddingBottom: 16,
+},
+taskItem: {
+  backgroundColor: 'rgba(88, 208, 255, 0.67)',
+  marginHorizontal: 16,
+  padding: 12,
+  marginBottom: 8,
+  borderRadius: 8,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.2,
+  shadowRadius: 4,
+  elevation: 3,
+},
+taskTitle: {
+  fontSize: 18,
+  fontWeight: '500',
+  color: '#3f51b5',
+},
+taskDeadline: {
+  fontSize: 14,
+  color: 'white',
+  marginTop: 4,
+},
 });
 
 export default HomeScreen;
