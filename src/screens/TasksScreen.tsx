@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TaskCard from '../components/TaskCard';
 import { useStore } from '../store/useStore';
@@ -11,45 +11,78 @@ type TasksScreenProps = {
   route: RouteProp<RootStackParamList, 'TasksList'>;
 };
 
-const TasksScreen: React.FC<TasksScreenProps> = ({ navigation, route }) => {
+const TasksScreen = ({ navigation, route }: { navigation: NavigationProp<any>, route: RouteProp<any> }) => {
   const { tasks = [], completeTask, deleteTask } = useStore();
-  const filter = route.params?.filter || 'all';
+  const [completedCollapsed, setCompletedCollapsed] = useState(false);
+  const [pendingCollapsed, setPendingCollapsed] = useState(false);
+  const [missedCollapsed, setMissedCollapsed] = useState(false);
 
-  const filteredTasks = tasks.filter(task => {
-    switch (filter) {
-      case 'completed':
-        return task.completed;
-      case 'pending':
-        return !task.completed && !task.missed;
-      case 'missed':
-        return task.missed;
-      default:
-        return true;
-    }
-  });
-
-  // Sort tasks by deadline (ascending order: closest first)
-  const sortedTasks = filteredTasks.sort((a, b) => {
-    return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
-  });
+  const completedTasks = tasks.filter(task => task.completed).sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+  const pendingTasks = tasks.filter(task => !task.completed && !task.missed).sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+  const missedTasks = tasks.filter(task => task.missed).sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={sortedTasks} // Use sortedTasks here
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <TaskCard
-            task={item}
-            onComplete={() => completeTask(item.id)}
-            onEdit={() => navigation.navigate('EditTask', { task: item })}
-            onDelete={() => deleteTask(item.id)}
-          />
-        )}
-      />
+      <TouchableOpacity onPress={() => setCompletedCollapsed(!completedCollapsed)} style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Completed Tasks</Text>
+        <Icon name={completedCollapsed ? 'expand-more' : 'expand-less'} size={24} />
+      </TouchableOpacity>
+      {!completedCollapsed && (
+        <FlatList
+          data={completedTasks}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <TaskCard
+              task={item}
+              onComplete={() => completeTask(item.id)}
+              onEdit={() => navigation.navigate('EditTask', { task: item })}
+              onDelete={() => deleteTask(item.id)}
+            />
+          )}
+        />
+      )}
+
+      <TouchableOpacity onPress={() => setPendingCollapsed(!pendingCollapsed)} style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Pending Tasks</Text>
+        <Icon name={pendingCollapsed ? 'expand-more' : 'expand-less'} size={24} />
+      </TouchableOpacity>
+      {!pendingCollapsed && (
+        <FlatList
+          data={pendingTasks}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <TaskCard
+              task={item}
+              onComplete={() => completeTask(item.id)}
+              onEdit={() => navigation.navigate('EditTask', { task: item })}
+              onDelete={() => deleteTask(item.id)}
+            />
+          )}
+        />
+      )}
+
+      <TouchableOpacity onPress={() => setMissedCollapsed(!missedCollapsed)} style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Missed Tasks</Text>
+        <Icon name={missedCollapsed ? 'expand-more' : 'expand-less'} size={24} />
+      </TouchableOpacity>
+      {!missedCollapsed && (
+        <FlatList
+          data={missedTasks}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <TaskCard
+              task={item}
+              onComplete={() => completeTask(item.id)}
+              onEdit={() => navigation.navigate('EditTask', { task: item })}
+              onDelete={() => deleteTask(item.id)}
+            />
+          )}
+        />
+      )}
+
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('AddTaskScreen')}
+        onPress={() => navigation.navigate('AddTask')}
       >
         <Icon name="add" size={30} color="white" />
       </TouchableOpacity>
@@ -62,6 +95,20 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: 'white',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   addButton: {
     position: 'absolute',
