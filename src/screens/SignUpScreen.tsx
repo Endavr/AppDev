@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProp } from '@react-navigation/native';
 
 const SignupScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
@@ -13,68 +13,125 @@ const SignupScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Already have an account? Log In</Text>
-      </TouchableOpacity>
-    </View>
+    <LinearGradient
+      colors={['#00e0ff', '#3f51b5', '#9c27b0']}
+      style={styles.gradientBackground}
+    >
+      <View style={styles.container}>
+        {/* Logo */}
+        <Image
+          source={require('../../assets/logo.png')} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
+        {/* Title and Subtitle */}
+        <Text style={styles.title}>Create an Account</Text>
+        <Text style={styles.subtitle}>Sign up to get started</Text>
+
+        {/* Email Input */}
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#aaa"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+
+        {/* Password Input */}
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#aaa"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        {/* Signup Button */}
+        <TouchableOpacity style={styles.button} onPress={handleSignup}>
+          <LinearGradient
+            colors={['#00e0ff', '#3f51b5']}
+            style={styles.buttonGradient}
+          >
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        {/* Login Link */}
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.link}>Already have an account? Log In</Text>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  gradientBackground: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 16,
-    backgroundColor: 'white',
+  },
+  logo: {
+    width: 300,
+    height: 200,
+
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
+    color: '#fff',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#e0e0e0',
+    marginBottom: 32,
     textAlign: 'center',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 16,
     fontSize: 16,
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
   button: {
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
+    width: '100%',
+    borderRadius: 10,
+    overflow: 'hidden',
     marginBottom: 16,
   },
+  buttonGradient: {
+    padding: 16,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
   buttonText: {
-    color: 'white',
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
   },
   link: {
-    color: '#007AFF',
-    textAlign: 'center',
+    color: '#00e0ff',
     fontSize: 16,
+    textAlign: 'center',
+    marginTop: 8,
+    textDecorationLine: 'underline',
   },
 });
 
